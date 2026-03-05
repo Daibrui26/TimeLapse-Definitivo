@@ -1,0 +1,179 @@
+// Bloque: card (genérico)
+.card {
+    background: $color-background;          // Fondo claro definido en variables
+    border-radius: $border-radius-xl;       // Bordes redondeados grandes (15px)
+    padding: $spacing-xl 35px;              // Espaciado interno (30px vertical + 35px horizontal)
+    box-shadow: $shadow-md;                 // Sombra media para dar profundidad
+    text-align: center;                     // Centra el contenido por defecto
+
+    // Modificador: profile
+    &--profile {
+        border-radius: $border-radius-lg;   // Bordes algo más pequeños (12px)
+        padding: $spacing-lg;               // Espaciado más compacto (20px)
+        display: flex;                      // Layout en flexbox
+        text-align: left;                   // Texto alineado a la izquierda
+        align-items: center;                // Centra verticalmente los elementos
+        gap: $spacing-md;                   // Espacio entre elementos (15px)
+        box-shadow: $shadow-sm;             // Sombra ligera
+    }
+
+    // Modificador: menu
+    &--menu {
+        border-radius: $border-radius-lg;   // Bordes medianos
+        padding: $spacing-sm;               // Espaciado pequeño (10px)
+        box-shadow: $shadow-sm;             // Sombra ligera
+    }
+
+    // Modificador: contact
+    &--contact {
+        padding: 45px 35px;                 // Espaciado más amplio
+        width: 100%;                        // Ocupa todo el ancho disponible
+        max-width: 420px;                   // Limitado a 420px (ideal para formularios/contacto)
+    }
+
+    // Modificador: main
+    &--main {
+        padding: 60px 70px;         // Espaciado muy grande (40px vertical + 70px horizontal)
+        margin-top: $spacing-lg;            // Separación superior (20px)
+        display: flex;              // Control de layout
+        flex-direction: column;     // Elementos en columna
+        gap: 20px;
+    }
+
+    // Modificador: form
+    &--form {
+        margin-top: $spacing-lg;            // Margen superior (20px)
+    }
+
+    // Elemento: profile-img
+    &__profile-img {
+        width: 65px;                        // Ancho fijo
+        height: 65px;                       // Alto fijo
+        border-radius: 50%;                 // Imagen circular
+        object-fit: cover;                  // Ajusta la imagen sin deformarla
+        border: 3px solid $color-primary;   // Borde azul oscuro
+    }
+
+    // Elemento: profile-info
+    &__profile-info {
+        // Contenedor de información del perfil
+    }
+
+    // Elemento: title
+    &__title {
+        color: $color-primary;              // Texto azul oscuro
+        font-weight: 600;                   // Seminegrita
+        font-size: $font-size-large;        // Tamaño grande (18px)
+        margin-bottom: $spacing-xs;         // Margen inferior pequeño (5px)
+    }
+
+    // Elemento: subtitle
+    &__subtitle {
+        color: $color-dark;                 // Texto gris oscuro
+        font-size: $font-size-small;        // Tamaño pequeño (13px)
+    }
+
+    // Modificador de title: main
+    &__title--main {
+        font-size: 22px;                    // Título más grande
+        font-weight: 700;                   // Negrita
+        margin-bottom: $spacing-md;         // Margen inferior medio (15px)
+    }
+
+    // Modificador de subtitle: main
+    &__subtitle--main {
+        font-size: 15px;                    // Texto algo más grande
+        line-height: 1.5;                   // Altura de línea para legibilidad
+        margin-bottom: 30px;                // Margen inferior amplio
+    }
+
+    // Modificador de title: contact
+    &__title--contact {
+        font-size: $font-size-xlarge;       // Texto muy grande (24px)
+        margin-bottom: 35px;                // Margen inferior amplio
+        font-weight: 700;                   // Negrita
+        line-height: 1.4;                   // Altura de línea ajustada
+    }
+}
+
+// Bloque: menu-nav
+.menu-nav {
+    display: flex;                          // Contenedor flex
+    flex-direction: column;                 // Elementos en columna
+
+    // Elemento: item
+    &__item {
+        color: $color-primary;              // Texto azul oscuro
+        text-decoration: none;              // Sin subrayado
+        padding: 14px 12px;                 // Espaciado interno
+        display: flex;                      // Layout flex
+        align-items: center;                // Centra verticalmente
+        gap: $spacing-md;                   // Espacio entre icono y texto
+        font-size: $font-size-base;         // Tamaño base (16px)
+        border-radius: $border-radius-sm;   // Bordes redondeados pequeños (8px)
+        cursor: pointer;                    // Cursor tipo mano
+        transition: all 0.2s;               // Transición rápida
+
+        &:hover {
+            background: #E0E0E0;            // Fondo gris claro en hover
+        }
+
+        // Modificador: danger
+        &--danger {
+            color: $color-danger;           // Texto rojo
+        }
+    }
+
+    // Elemento: icon
+    &__icon {
+        width: 22px;                        // Icono cuadrado
+        height: 22px;
+        object-fit: contain;                // Ajusta sin deformar
+    }
+
+    // Elemento: star
+    &__star {
+        color: $color-primary;              // Estrella azul
+        font-size: 22px;                    // Tamaño grande
+    }
+
+    // Modificador de star: danger
+    &__star--danger {
+        color: $color-danger;               // Estrella roja
+    }
+}
+
+// Bloque: contact-nav
+.contact-nav {
+    display: flex;                          // Contenedor flex
+    flex-direction: column;                 // Elementos en columna
+    gap: 8px;                               // Espacio entre opciones
+
+    // Elemento: option
+    &__option {
+        color: $color-primary;              // Texto azul oscuro
+        font-size: $font-size-medium;       // Tamaño medio (17px)
+        padding: 16px $spacing-lg;          // Espaciado interno (vertical + horizontal)
+        text-decoration: none;              // Sin subrayado
+        cursor: pointer;                    // Cursor tipo mano
+        border-radius: $border-radius-md;   // Bordes redondeados medianos (10px)
+        transition: all 0.3s;               // Transición suave
+        display: flex;                      // Layout flex
+        align-items: center;                // Centra verticalmente
+        gap: $spacing-md;                   // Espacio entre icono y texto
+        text-align: left;                   // Texto alineado a la izquierda
+        font-weight: 500;                   // Peso medio
+
+        &:hover {
+            background: $color-accent;      // Fondo azul claro en hover
+            transform: translateX(5px);     // Desplaza el botón hacia la derecha
+        }
+    }
+
+    // Elemento: icon
+    &__icon {
+        font-size: 22px;                    // Icono grande
+        min-width: 25px;                    // Ancho mínimo para alinear
+        text-align: center;                 // Centra el icono
+    }
+}

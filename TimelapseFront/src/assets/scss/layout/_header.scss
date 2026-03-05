@@ -1,0 +1,57 @@
+// Bloque: header
+.header {
+    background: $color-secondary;          // Fondo azul grisáceo (color secundario)
+    padding: $spacing-lg $spacing-xl;      // Espaciado interno: 20px vertical, 30px horizontal
+    display: flex;                         // Contenedor flex
+    justify-content: space-between;        // Logo a la izquierda, perfil/botón a la derecha
+    align-items: center;                   // Centra verticalmente los elementos
+    box-shadow: $shadow-sm;                // Sombra ligera para dar profundidad
+
+    // Modificador: fixed
+    &--fixed {
+        box-shadow: none;                  // Variante sin sombra (ej. header fijo)
+    }
+
+    // Elemento: logo
+    &__logo {
+        height: 40px;                      // Altura fija del logo
+        cursor: pointer;                   // Cursor tipo mano
+        transition: transform 0.3s;        // Transición suave al escalar
+
+        &:hover {
+            transform: scale(1.05);        // Efecto de zoom ligero al pasar el ratón
+        }
+    }
+
+    // Elemento: profile
+    &__profile {
+        width: 45px;                       // Ancho fijo
+        height: 45px;                      // Alto fijo
+        border-radius: 50%;                // Imagen circular
+        object-fit: cover;                 // Ajusta la imagen sin deformarla
+        border: 2px solid $color-background; // Borde claro alrededor
+        cursor: pointer;                   // Cursor tipo mano
+        transition: border-color 0.3s;     // Transición suave al cambiar color de borde
+
+        &:hover {
+            border-color: $color-primary;  // Borde azul oscuro en hover
+        }
+    }
+
+    // Elemento: btn
+    &__btn {
+        background: $color-primary;        // Fondo azul oscuro
+        color: $color-background;          // Texto claro
+        padding: 10px 24px;                // Espaciado interno (vertical + horizontal)
+        border-radius: $border-radius-md;  // Bordes redondeados medianos (10px)
+        text-decoration: none;             // Sin subrayado
+        font-weight: 600;                  // Texto seminegrita
+        font-size: 15px;                   // Tamaño intermedio
+        transition: all 0.3s;              // Transición suave para hover
+
+        &:hover {
+            background: darken($color-primary, 10%); // Fondo más oscuro en hover
+            transform: translateY(-2px);             // Efecto de "levantar" el botón
+        }
+    }
+}

@@ -1,0 +1,375 @@
+// ── Animación sacudida ────────────────────────────────────────────────────────
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%       { transform: translateX(-6px); }
+  30%       { transform: translateX(6px); }
+  45%       { transform: translateX(-4px); }
+  60%       { transform: translateX(4px); }
+  75%       { transform: translateX(-2px); }
+  90%       { transform: translateX(2px); }
+}
+
+.capsula-item--shake {
+  animation: shake 0.5s ease;
+}
+
+// Mensaje de bloqueada debajo de la card
+.capsula-item__locked-msg {
+  background: $color-primary;
+  color: #fff;
+  border-radius: 0 0 $border-radius-lg $border-radius-lg;
+  padding: 10px $spacing-lg;
+  font-size: $font-size-small;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: -6px;
+  animation: fadeSlideDown 0.3s ease;
+
+  &-icon { font-size: 14px; }
+  &-text { flex: 1; }
+  &-date { font-weight: 600; opacity: 0.9; }
+}
+
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Vista detalle cápsula ─────────────────────────────────────────────────────
+.page__main--capsula-detalle {
+  max-width: 700px !important;
+  gap: $spacing-lg;
+}
+
+// Card de cabecera
+.capsula-detalle {
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+  }
+
+  &__emoji {
+    font-size: 48px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    text-align: left;
+  }
+
+  &__titulo {
+    color: $color-primary;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  &__badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: $color-accent;
+    color: $color-primary;
+
+    &--publica  { background: #d4edda; color: #2d6a4f; }
+    &--privada  { background: #f8d7da; color: #842029; }
+  }
+}
+
+// Secciones internas
+.capsula-seccion {
+  text-align: left;
+
+  &__titulo {
+    color: $color-primary;
+    font-size: $font-size-base;
+    font-weight: 700;
+    margin-bottom: $spacing-sm;
+    padding-bottom: 8px;
+    border-bottom: 2px solid $color-accent;
+  }
+
+  &__texto {
+    color: $color-dark;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+}
+
+// Fechas
+.capsula-fechas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+
+  &__item {
+    background: lighten($color-accent, 6%);
+    border-radius: $border-radius-md;
+    padding: $spacing-md;
+    text-align: center;
+  }
+
+  &__label {
+    color: $color-secondary;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  &__valor {
+    color: $color-primary;
+    font-size: 15px;
+    font-weight: 600;
+  }
+}
+
+// Participantes
+.capsula-participantes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  &__tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: $color-accent;
+    color: $color-primary;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: $font-size-small;
+    font-weight: 600;
+  }
+}
+
+// Grid de archivos
+.capsula-archivos {
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: $spacing-md;
+  }
+
+  &__item {
+    border-radius: $border-radius-md;
+    overflow: hidden;
+    background: #000;
+    aspect-ratio: 1;
+    position: relative;
+    cursor: pointer;
+    box-shadow: $shadow-sm;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      transform: scale(1.03);
+      box-shadow: $shadow-md;
+    }
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__doc {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: lighten($color-accent, 4%);
+    gap: 8px;
+    text-decoration: none;
+    padding: $spacing-sm;
+  }
+
+  &__doc-icon {
+    font-size: 36px;
+  }
+
+  &__doc-name {
+    color: $color-primary;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    word-break: break-word;
+  }
+
+  &__play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    font-size: 40px;
+    pointer-events: none;
+  }
+
+  &__empty {
+    color: #999;
+    font-size: $font-size-small;
+    font-style: italic;
+  }
+}
+
+// ── Comentarios ───────────────────────────────────────────────────────────────
+.capsula-comentarios {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  &__textarea {
+    padding: 12px;
+    border: 2px solid #D0D0D0;
+    border-radius: $border-radius-md;
+    font-size: 14px;
+    font-family: $font-family;
+    min-height: 90px;
+    resize: vertical;
+    transition: border-color 0.3s;
+    width: 100%;
+
+    &:focus {
+      outline: none;
+      border-color: $color-secondary;
+    }
+
+    &::placeholder { color: #999; }
+  }
+
+  &__submit {
+    align-self: flex-end;
+    background: $color-primary;
+    color: #fff;
+    border: none;
+    border-radius: $border-radius-md;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: darken($color-primary, 10%);
+      transform: translateY(-1px);
+    }
+
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
+
+  &__no-access {
+    background: lighten($color-accent, 6%);
+    border-radius: $border-radius-md;
+    padding: $spacing-md;
+    color: $color-dark;
+    font-size: $font-size-small;
+    text-align: center;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  &__empty {
+    color: #999;
+    font-size: $font-size-small;
+    font-style: italic;
+    text-align: center;
+    padding: $spacing-md 0;
+  }
+
+  &__item {
+    background: #fff;
+    border-radius: $border-radius-md;
+    padding: $spacing-md;
+    box-shadow: $shadow-sm;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  &__autor {
+    font-weight: 600;
+    color: $color-primary;
+    font-size: $font-size-small;
+  }
+
+  &__fecha {
+    color: #aaa;
+    font-size: 12px;
+  }
+
+  &__texto {
+    color: $color-dark;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  &__delete {
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    transition: color 0.2s;
+    line-height: 1;
+
+    &:hover { color: $color-danger; }
+  }
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .capsula-fechas {
+    grid-template-columns: 1fr;
+  }
+
+  .capsula-archivos__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .capsula-detalle__emoji {
+    font-size: 36px;
+  }
+}

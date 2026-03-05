@@ -1,0 +1,109 @@
+// Bloque: btn
+.btn {
+    display: flex;                        // El botón se comporta como un contenedor flex
+    align-items: center;                  // Centra verticalmente el contenido (texto + iconos)
+    justify-content: center;              // Centra horizontalmente el contenido
+    gap: $spacing-sm;                     // Espacio entre elementos internos (ej. icono y texto)
+    padding: 16px;                        // Relleno interno del botón
+    border-radius: $border-radius-md;     // Bordes redondeados (10px según tus variables)
+    text-decoration: none;                // Elimina subrayado (si es un <a>)
+    font-size: $font-size-medium;         // Tamaño de fuente medio (17px)
+    font-weight: 600;                     // Texto seminegrita
+    transition: all 0.3s;                 // Transición suave para hover
+    cursor: pointer;                      // Cursor tipo mano al pasar
+    border: none;                         // Sin borde por defecto
+
+    &:hover {
+        transform: translateY(-2px);      // Efecto de "levantar" el botón al pasar el ratón
+    }
+
+    // Modificador: primary
+    &--primary {
+        background: $color-accent;        // Fondo azul claro
+        color: $color-primary;            // Texto azul oscuro
+
+        &:hover {
+            background: darken($color-accent, 5%); // Oscurece el fondo en hover
+        }
+    }
+
+    // Modificador: secondary
+    &--secondary {
+        background: $color-accent;        // Igual que primary (puedes diferenciarlos más si quieres)
+        color: $color-primary;
+
+        &:hover {
+            background: darken($color-accent, 5%);
+        }
+    }
+
+    // Modificador: submit
+    &--submit {
+        background: $color-accent;
+        color: $color-primary;
+        padding: 14px;                    // Padding más ajustado
+        display: block;                   // Ocupa todo el ancho disponible
+        text-align: center;               // Centra el texto
+
+        &:hover {
+            background: darken($color-accent, 5%);
+        }
+    }
+
+    // Modificador: cancel
+    &--cancel {
+        background: transparent;          // Fondo transparente
+        color: $color-danger;             // Texto rojo
+        padding: 14px;
+        display: block;
+        text-align: center;
+        border: 2px solid $color-danger;  // Borde rojo
+
+        &:hover {
+            background: $color-danger;    // Fondo rojo en hover
+            color: $color-background;     // Texto blanco/gris claro
+        }
+    }
+
+    // Modificador: add
+    &--add {
+        background: $color-dark;          // Fondo gris oscuro
+        color: $color-background;         // Texto claro
+        padding: 12px 20px;               // Padding más horizontal
+        font-size: 14px;                  // Texto más pequeño
+        font-weight: 500;                 // Peso medio
+        gap: 8px;                         // Espacio entre icono y texto
+
+        &:hover {
+            background: darken($color-dark, 10%); // Oscurece el fondo en hover
+        }
+    }
+
+    // Elemento: icon
+    &__icon {
+        font-size: 28px;                  // Icono grande
+        font-weight: 300;                 // Peso ligero
+    }
+
+    // Elemento: icon-menu
+    &__icon-menu {
+        font-size: 20px;                  // Icono más pequeño para menú
+    }
+
+    // Elemento: icon-add
+    &__icon-add {
+        font-size: 18px;                  // Icono específico para añadir
+    }
+}
+
+// Contenedor de botones de medios
+.btn-group {
+    display: flex;                        // Contenedor flex para agrupar botones
+    gap: $spacing-sm;                     // Espacio entre botones
+    justify-content: center;              // Centra los botones en el contenedor
+
+    // Modificador: media
+    &--media {
+        gap: $spacing-sm;                 // Mantiene el mismo espaciado (puedes personalizarlo)
+    }
+}

@@ -1,0 +1,68 @@
+// Bloque: form
+.form {
+    display: flex;                  // El formulario se comporta como un contenedor flex
+    flex-direction: column;         // Los elementos se apilan en columna
+    gap: $spacing-lg;               // Espacio grande (20px) entre los grupos de campos
+
+    // Elemento: group
+    &__group {
+        display: flex;              // Contenedor flex para cada grupo de campo
+        flex-direction: column;     // Los elementos dentro del grupo se apilan en columna
+        gap: 8px;                   // Espacio entre label e input/textarea
+        text-align: left;           // Texto alineado a la izquierda
+    }
+
+    // Elemento: label
+    &__label {
+        color: $color-primary;      // Texto azul oscuro
+        font-weight: 600;           // Seminegrita
+        font-size: 15px;            // Tamaño de fuente intermedio
+    }
+
+    // Elemento: input
+    &__input {
+        padding: 12px;              // Relleno interno
+        border: 2px solid #D0D0D0;  // Borde gris claro
+        border-radius: $border-radius-sm; // Bordes redondeados pequeños (8px)
+        font-size: 14px;            // Texto algo más pequeño
+        font-family: $font-family;  // Fuente definida en variables
+        transition: border-color 0.3s; // Transición suave al cambiar color de borde
+
+        &:focus {
+            outline: none;          // Elimina el borde azul por defecto del navegador
+            border-color: $color-secondary; // Cambia el borde a azul grisáceo al enfocar
+        }
+
+        &::placeholder {
+            color: #999;            // Color gris para el texto del placeholder
+        }
+    }
+
+    // Elemento: textarea
+    &__textarea {
+        padding: 12px;              // Relleno interno
+        border: 2px solid #D0D0D0;  // Borde gris claro
+        border-radius: $border-radius-sm; // Bordes redondeados pequeños
+        font-size: 14px;            // Texto algo más pequeño
+        font-family: $font-family;  // Fuente definida en variables
+        min-height: 120px;          // Altura mínima para el área de texto
+        resize: vertical;           // Permite redimensionar solo en vertical
+        transition: border-color 0.3s; // Transición suave al cambiar color de borde
+
+        &:focus {
+            outline: none;          // Elimina el borde azul por defecto
+            border-color: $color-secondary; // Cambia el borde al enfocar
+        }
+
+        &::placeholder {
+            color: #999;            // Placeholder en gris
+        }
+    }
+
+    // Elemento: separator
+    &__separator {
+        border: none;               // Elimina bordes por defecto
+        border-top: 1px solid #D0D0D0; // Línea horizontal gris
+        margin: $spacing-sm 0;      // Margen vertical pequeño (10px arriba y abajo)
+    }
+}

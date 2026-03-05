@@ -1,0 +1,79 @@
+// Bloque: welcome
+.welcome {
+    margin-top: $spacing-xl;
+    padding: 50px 35px; // 👈 AÑADIR ESTA LÍNEA
+
+    // Elemento: title
+    &__title {
+        font-size: 28px;
+        color: $color-primary;
+        font-weight: 700;
+        margin-bottom: $spacing-lg;
+        line-height: 1.5;
+    }
+
+    // Elemento: btn
+    &__btn {
+        background: $color-primary;
+        color: $color-background;
+        padding: 14px 50px;
+        border-radius: $border-radius-md;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: $font-size-base;
+        display: inline-block;
+        margin-bottom: $spacing-xl;
+        transition: all 0.3s;
+
+        &:hover {
+            background: darken($color-primary, 10%);
+            transform: translateY(-2px);
+        }
+    }
+
+    // Elemento: text
+    &__text {
+        font-size: 14px;
+        color: $color-dark;
+    }
+}
+
+// Bloque: info
+.info {
+    padding: 50px 35px; 
+    margin-top: $spacing-md;
+
+    // Elemento: description
+    &__description {
+        color: $color-dark;
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: $spacing-lg;
+    }
+
+    // Elemento: title
+    &__title {
+        color: $color-primary;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: $spacing-xl;
+    }
+
+    // Elemento: cta
+    &__cta {
+        font-size: 15px;
+        color: $color-dark;
+    }
+}
+
+// Bloque: link (genérico para enlaces)
+.link {
+    color: $color-secondary;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+
+    &:hover {
+        color: $color-primary;
+    }
+}

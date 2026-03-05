@@ -1,0 +1,74 @@
+// Bloque: footer
+.footer {
+    background: $color-dark;               // Fondo gris oscuro
+    padding: $spacing-xl $spacing-lg;      // Espaciado interno (30px vertical, 20px horizontal)
+    color: $color-background;              // Texto claro (gris/blanco)
+    font-size: 14px;                       // Tamaño de fuente base para el footer
+
+    // Elemento: content
+    &__content {
+        max-width: 420px;                  // Limita el ancho máximo del contenido
+        margin: 0 auto;                    // Centra horizontalmente
+        display: flex;                     // Contenedor flex
+        flex-direction: column;            // Elementos en columna
+        gap: 25px;                         // Espacio entre secciones internas
+    }
+
+    // Elemento: nav
+    &__nav {
+        display: flex;                     // Contenedor flex
+        flex-direction: column;            // Links en columna
+        gap: $spacing-sm;                  // Espacio pequeño entre enlaces (10px)
+        padding-bottom: 15px;              // Separación inferior
+        border-bottom: 1px solid rgba(240, 240, 240, 0.2); // Línea divisoria semitransparente
+    }
+
+    // Elemento: link
+    &__link {
+        color: $color-background;          // Texto claro
+        text-decoration: none;             // Sin subrayado
+        transition: color 0.3s;            // Transición suave al cambiar color
+        font-size: 15px;                   // Tamaño de fuente intermedio
+
+        &:hover {
+            color: $color-accent;          // Cambia a azul claro en hover
+        }
+    }
+
+    // Elemento: contact
+    &__contact {
+        display: flex;                     // Contenedor flex
+        flex-direction: column;            // Elementos en columna
+        gap: 8px;                          // Espacio entre textos
+        padding-bottom: 15px;              // Separación inferior
+        border-bottom: 1px solid rgba(240, 240, 240, 0.2); // Línea divisoria
+    }
+
+    // Elemento: contact-text
+    &__contact-text {
+        color: $color-background;          // Texto claro
+        font-size: 15px;                   // Tamaño intermedio
+    }
+
+    // Elemento: social
+    &__social {
+        display: flex;                     // Contenedor flex
+        flex-direction: row;               // Elementos en fila
+        gap: 20px;                         // Espacio entre iconos/enlaces
+        justify-content: center;           // Centra horizontalmente
+    }
+
+    // Elemento: social-link
+    &__social-link {
+        color: $color-background;          // Texto claro
+        text-decoration: none;             // Sin subrayado
+        transition: all 0.3s;              // Transición suave para hover
+        font-size: 15px;                   // Tamaño intermedio
+        font-weight: 500;                  // Peso medio
+
+        &:hover {
+            color: $color-accent;          // Cambia a azul claro en hover
+            transform: translateY(-2px);   // Efecto de "levantar" el enlace
+        }
+    }
+}

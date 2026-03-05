@@ -1,0 +1,33 @@
+// Colores principales
+$color-primary: #183263;      // Azul oscuro: color principal de la marca o interfaz
+$color-secondary: #697C9F;    // Azul grisáceo: color secundario para elementos de apoyo
+$color-accent: #CCDAE0;       // Azul muy claro: usado como acento o fondos suaves
+$color-background: #F0F0F0;   // Gris claro: color base para fondos generales
+$color-dark: #3A4156;         // Gris oscuro: para textos o elementos contrastados
+$color-danger: #C85C5C;       // Rojo: para alertas, errores o estados de peligro
+
+// Tipografía
+$font-family: Arial, sans-serif; // Fuente principal de todo el proyecto
+$font-size-base: 16px;           // Tamaño de fuente base (normal)
+$font-size-small: 13px;          // Texto pequeño (ej. notas, labels secundarios)
+$font-size-medium: 17px;         // Texto ligeramente más grande que el base
+$font-size-large: 18px;          // Texto grande (ej. subtítulos)
+$font-size-xlarge: 24px;         // Texto muy grande (ej. títulos principales)
+
+// Espaciados
+$spacing-xs: 5px;    // Extra pequeño: márgenes/paddings muy ajustados
+$spacing-sm: 10px;   // Pequeño: espaciados cortos
+$spacing-md: 15px;   // Medio: espaciado estándar
+$spacing-lg: 20px;   // Grande: separación amplia
+$spacing-xl: 30px;   // Extra grande: separación muy marcada
+$spacing-xxl: 40px;  // Extra extra grande: para bloques grandes o secciones
+
+// Border radius
+$border-radius-sm: 8px;   // Bordes redondeados pequeños
+$border-radius-md: 10px;  // Bordes redondeados medios
+$border-radius-lg: 12px;  // Bordes redondeados grandes
+$border-radius-xl: 15px;  // Bordes redondeados muy grandes
+
+// Sombras
+$shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.1);   // Sombra ligera y discreta
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15); // Sombra más marcada para destacar elementos

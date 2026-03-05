@@ -1,0 +1,318 @@
+// ── Página crear cápsula ──────────────────────────────────────────────────────
+.page__main--crear-capsula {
+  max-width: 650px !important;
+}
+
+.card--crear-capsula {
+  padding: 45px 40px;
+  width: 100%;
+  text-align: left;
+}
+
+// Cabecera de la vista
+.crear-capsula {
+  &__header {
+    margin-bottom: 35px;
+  }
+
+  &__title {
+    color: $color-primary;
+    font-size: $font-size-xlarge;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  &__subtitle {
+    color: $color-dark;
+    font-size: $font-size-small;
+  }
+}
+
+// ── Selector de emoji ─────────────────────────────────────────────────────────
+.emoji-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__label {
+    color: $color-primary;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+
+  &__option {
+    background: #fff;
+    border: 2px solid #D0D0D0;
+    border-radius: $border-radius-md;
+    font-size: 22px;
+    padding: 10px 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    line-height: 1;
+
+    &:hover {
+      border-color: $color-secondary;
+      background: lighten($color-accent, 6%);
+      transform: scale(1.08);
+    }
+
+    &--selected {
+      border-color: $color-primary;
+      background: $color-accent;
+      transform: scale(1.08);
+      box-shadow: $shadow-sm;
+    }
+  }
+
+  &__preview {
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: $color-dark;
+    font-size: $font-size-small;
+
+    span:first-child {
+      font-size: 28px;
+    }
+  }
+}
+
+// ── Upload de archivos ────────────────────────────────────────────────────────
+.upload-area {
+  border: 2px dashed #D0D0D0;
+  border-radius: $border-radius-lg;
+  padding: $spacing-xl;
+  text-align: center;
+  transition: all 0.3s;
+  cursor: pointer;
+  background: #fafafa;
+
+  &:hover,
+  &--dragover {
+    border-color: $color-secondary;
+    background: lighten($color-accent, 8%);
+  }
+
+  &__icon {
+    font-size: 36px;
+    margin-bottom: $spacing-sm;
+    display: block;
+  }
+
+  &__text {
+    color: $color-dark;
+    font-size: $font-size-small;
+    margin-bottom: 6px;
+  }
+
+  &__hint {
+    color: $color-secondary;
+    font-size: 12px;
+  }
+
+  &__input {
+    display: none;
+  }
+}
+
+// Lista de archivos adjuntos
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: $spacing-sm;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    background: lighten($color-accent, 8%);
+    border-radius: $border-radius-sm;
+    padding: 10px 14px;
+    font-size: $font-size-small;
+    color: $color-dark;
+  }
+
+  &__icon {
+    font-size: 18px;
+  }
+
+  &__name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__remove {
+    background: none;
+    border: none;
+    color: $color-danger;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    line-height: 1;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+}
+
+// ── Participantes ─────────────────────────────────────────────────────────────
+.participantes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__search {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #D0D0D0;
+    border-radius: $border-radius-sm;
+    font-size: 14px;
+    font-family: $font-family;
+    transition: border-color 0.3s;
+
+    &:focus {
+      outline: none;
+      border-color: $color-secondary;
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+
+  &__btn-add {
+    background: $color-primary;
+    color: #fff;
+    border: none;
+    border-radius: $border-radius-sm;
+    padding: 0 18px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: darken($color-primary, 10%);
+      transform: scale(1.05);
+    }
+  }
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  &__tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: $color-accent;
+    color: $color-primary;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: $font-size-small;
+    font-weight: 600;
+
+    &-remove {
+      background: none;
+      border: none;
+      color: $color-primary;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+      line-height: 1;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__empty {
+    color: #999;
+    font-size: $font-size-small;
+    font-style: italic;
+  }
+}
+
+// ── Selector visibilidad ──────────────────────────────────────────────────────
+.visibility-selector {
+  display: flex;
+  gap: $spacing-sm;
+
+  &__option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border: 2px solid #D0D0D0;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    font-weight: 500;
+    color: $color-dark;
+    background: #fff;
+
+    &:hover {
+      border-color: $color-secondary;
+      background: lighten($color-accent, 6%);
+    }
+
+    &--selected {
+      border-color: $color-primary;
+      background: $color-accent;
+      color: $color-primary;
+      font-weight: 600;
+    }
+
+    &-icon {
+      font-size: 16px;
+    }
+  }
+}
+
+// Acciones finales del formulario
+.crear-capsula-actions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .card--crear-capsula {
+    padding: 35px 25px;
+  }
+
+  .emoji-selector__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .visibility-selector {
+    flex-direction: column;
+  }
+}

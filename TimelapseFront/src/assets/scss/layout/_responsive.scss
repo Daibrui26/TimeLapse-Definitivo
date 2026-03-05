@@ -1,0 +1,65 @@
+@media (max-width: 480px) {
+    .header {
+        padding: 15px $spacing-lg;
+
+        &__logo {
+            height: 35px;
+        }
+
+        &__profile {
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    .page__main {
+        padding: $spacing-xl 15px;
+    }
+
+    .card {
+        padding: 35px 25px;
+
+        &--contact,
+        &--main,
+        &--form {
+            padding: 35px 25px;
+        }
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .contact-nav__option {
+        font-size: $font-size-base;
+        padding: 14px 16px;
+    }
+
+    // Footer responsive
+    .footer {
+        padding: $spacing-lg 15px;
+        font-size: 13px;
+
+        &__content {
+            gap: $spacing-lg;
+        }
+
+        &__nav,
+        &__contact {
+            gap: 8px;
+        }
+
+        &__link,
+        &__contact-text {
+            font-size: 14px;
+        }
+
+        &__social {
+            gap: 15px;
+        }
+
+        &__social-link {
+            font-size: 14px;
+        }
+    }
+}

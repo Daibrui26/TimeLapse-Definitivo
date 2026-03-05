@@ -1,0 +1,110 @@
+// Página de perfil - Sobrescribe el max-width para desktop
+.page__main--perfil {
+    justify-content: center;
+    max-width: 650px !important; // Sobrescribe el max-width de 420px para desktop
+}
+
+// Card de perfil
+.card--perfil {
+    padding: 45px 35px;
+    width: 100%;
+}
+
+// Header del perfil (título + botón editar)
+.perfil-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.perfil-header__title {
+    color: $color-primary;
+    font-size: $font-size-xlarge;
+    font-weight: 700;
+    margin: 0;
+}
+
+.perfil-header__btn {
+    background: #4A9FBD;
+    color: white;
+    padding: 10px 24px;
+    border-radius: $border-radius-md;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s;
+
+    &:hover {
+        background: darken(#4A9FBD, 8%);
+        transform: translateY(-1px);
+    }
+}
+
+// Sección de usuario
+.perfil-user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-xs;
+    margin-bottom: 35px;
+}
+
+.perfil-user__avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid $color-primary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: $spacing-sm;
+}
+
+.perfil-user__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.perfil-user__name {
+    color: $color-primary;
+    font-size: $font-size-large;
+    font-weight: 600;
+    margin: 0;
+}
+
+.perfil-user__email {
+    color: $color-dark;
+    font-size: $font-size-small;
+    margin: 0;
+}
+
+// Formulario de campos
+.perfil-form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+}
+
+.perfil-form__group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.perfil-form__label {
+    color: $color-dark;
+    font-size: $font-size-base;
+    font-weight: 500;
+    text-align: left;
+}
+
+.perfil-form__input {
+    background: lighten($color-accent, 8%);
+    border: none;
+    border-radius: $border-radius-md;
+    padding: 16px;
+    min-height: 50px;
+}

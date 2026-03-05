@@ -1,0 +1,99 @@
+// Página de tus cápsulas - Sobrescribe el max-width para desktop
+.page__main--capsulas {
+    max-width: 650px !important; // Sobrescribe el max-width de 420px para desktop
+}
+
+// Lista de cápsulas
+.capsulas-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    width: 100%;
+}
+
+// Wrapper del item (es el que hace la animación completa)
+.capsula-item-wrapper {
+    display: block;
+    transition: all 0.3s;
+
+    &:hover {
+        transform: translateY(-2px);
+
+        .capsula-item {
+            box-shadow: $shadow-md;
+        }
+    }
+}
+
+// Item individual de cápsula
+.capsula-item {
+    background: $color-background;
+    border-radius: $border-radius-lg;
+    padding: $spacing-lg;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    text-decoration: none;
+    box-shadow: $shadow-sm;
+    transition: box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.capsula-item__star {
+    color: $color-primary;
+    font-size: 24px;
+    min-width: 30px;
+    text-align: center;
+}
+
+.capsula-item__content {
+    flex: 1;
+    text-align: left;
+}
+
+.capsula-item__title {
+    color: $color-primary;
+    font-size: $font-size-medium;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.capsula-item__date {
+    color: $color-dark;
+    font-size: $font-size-small;
+    margin: 0;
+}
+
+// Estado vacío
+.capsulas-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-lg;
+    background: $color-background;
+    border-radius: $border-radius-xl;
+    padding: $spacing-xxl 35px;
+    box-shadow: $shadow-md;
+    text-align: center;
+    width: 100%;
+
+    &__text {
+        color: $color-primary;
+        font-size: $font-size-large;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    &__subtext {
+        color: $color-dark;
+        font-size: $font-size-base;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    &__btn {
+        margin-top: $spacing-sm;
+        width: 100%;
+        max-width: 320px;
+    }
+}
