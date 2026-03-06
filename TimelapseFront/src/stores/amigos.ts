@@ -41,6 +41,18 @@ export const useAmigosStore = defineStore('amigos', () => {
     }
   }
 
+  async function eliminar(idUsuarioActual: number, idAmigo: number) {
+    const amistades = await amigosService.getAll()
+    const amistad = amistades.find(
+      (a: Amistad) =>
+        (a.idUsuario1 === idUsuarioActual && a.idUsuario2 === idAmigo) ||
+        (a.idUsuario1 === idAmigo && a.idUsuario2 === idUsuarioActual)
+    )
+    if (!amistad) throw new Error('Amistad no encontrada')
+    await amigosService.delete(amistad.idAmistad)
+    amigos.value = amigos.value.filter(a => a.idUsuario !== idAmigo)
+  }
+
   function reset() {
     amigos.value = []
     error.value  = ''
@@ -49,6 +61,6 @@ export const useAmigosStore = defineStore('amigos', () => {
   return {
     amigos, loading, error,
     total,
-    fetchByUsuario, reset
+    fetchByUsuario, eliminar, reset
   }
 })
