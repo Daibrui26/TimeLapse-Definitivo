@@ -105,49 +105,68 @@
             </div>
           </div>
 
-          <!-- Participantes -->
+          <!-- Participantes (solo amigos) -->
           <div class="form__group">
             <label class="form__label">Participantes</label>
+
             <div class="participantes">
-              <div class="participantes__search">
+
+              <!-- Cargando amigos -->
+              <p v-if="amigosStore.loading" class="participantes__empty">
+                Cargando amigos...
+              </p>
+
+              <!-- Sin amigos -->
+              <p v-else-if="amigosStore.total === 0" class="participantes__empty">
+                No tienes amigos añadidos todavía.
+              </p>
+
+              <template v-else>
+                <!-- Buscador dentro de los amigos -->
                 <input
-                  v-model="participanteInput"
+                  v-model="filtroAmigos"
                   type="text"
                   class="participantes__input"
-                  placeholder="Buscar usuario por nombre..."
-                  @input="buscarUsuarios"
-                  @keydown.enter.prevent="añadirPorNombre"
+                  placeholder="Buscar entre tus amigos..."
                 />
-                <button type="button" class="participantes__btn-add" @click="añadirPorNombre">+</button>
-              </div>
 
-              <div v-if="sugerencias.length > 0" class="participantes__list">
-                <button
-                  v-for="u in sugerencias"
-                  :key="u.idUsuario"
-                  type="button"
-                  class="participantes__tag"
-                  style="cursor:pointer"
-                  @click="seleccionarUsuario(u)"
-                >
-                  👤 {{ u.nombre }}
-                  <span style="font-size:11px; opacity:0.7">{{ u.email }}</span>
-                </button>
-              </div>
+                <!-- Lista de amigos disponibles -->
+                <div v-if="amigosDisponibles.length > 0" class="participantes__list">
+                  <button
+                    v-for="amigo in amigosDisponibles"
+                    :key="amigo.idUsuario"
+                    type="button"
+                    class="participantes__tag"
+                    style="cursor: pointer; opacity: 0.7"
+                    @click="añadirParticipante(amigo)"
+                  >
+                    👤 {{ amigo.nombre }}
+                    <span style="font-size:11px">+</span>
+                  </button>
+                </div>
+                <p v-else-if="filtroAmigos" class="participantes__empty">
+                  No se encontró ningún amigo con ese nombre.
+                </p>
 
-              <div v-if="participantesSeleccionados.length > 0" class="participantes__list">
-                <span
-                  v-for="p in participantesSeleccionados"
-                  :key="p.idUsuario"
-                  class="participantes__tag"
-                >
-                  👤 {{ p.nombre }}
-                  <button type="button" class="participantes__tag-remove" @click="quitarParticipante(p.idUsuario)">×</button>
+                <!-- Participantes seleccionados -->
+                <div v-if="participantesSeleccionados.length > 0" class="participantes__list" style="margin-top: 8px">
+                  <span
+                    v-for="p in participantesSeleccionados"
+                    :key="p.idUsuario"
+                    class="participantes__tag"
+                  >
+                    👤 {{ p.nombre }}
+                    <button
+                      type="button"
+                      class="participantes__tag-remove"
+                      @click="quitarParticipante(p.idUsuario)"
+                    >×</button>
+                  </span>
+                </div>
+                <span v-else class="participantes__empty">
+                  Sin participantes adicionales
                 </span>
-              </div>
-              <span v-else-if="sugerencias.length === 0" class="participantes__empty">
-                Sin participantes adicionales
-              </span>
+              </template>
             </div>
           </div>
 
@@ -204,28 +223,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import AppHeader from '@/components/AppHeader.vue'
 import { api } from '@/services/api'
 import { useAuthStore } from '@/stores/auth'
-
-interface Usuario {
-  idUsuario: number
-  nombre: string
-  email: string
-}
+import { useAmigosStore } from '@/stores/amigos'
+import type { Amigo } from '@/services/amigosService'
 
 interface CapsulaCreada {
   idCapsula: number
 }
 
-const router = useRouter()
-const authStore = useAuthStore()
-const loading = ref(false)
+const router      = useRouter()
+const authStore   = useAuthStore()
+const amigosStore = useAmigosStore()
+
+const loading      = ref(false)
 const errorServidor = ref('')
+const filtroAmigos = ref('')
 
 // ── Emojis ────────────────────────────────────────────────────────────────────
 const EMOJIS = ['⏳', '📦', '🌟', '💌', '🎁', '🏖️', '🎓', '❤️', '🌍', '📷', '🎵', '🏡']
@@ -237,6 +255,33 @@ const minDate = computed(() => {
   d.setDate(d.getDate() + 1)
   return d.toISOString().split('T')[0]
 })
+
+// ── Cargar amigos al montar ───────────────────────────────────────────────────
+onMounted(async () => {
+  if (authStore.usuario?.idUsuario) {
+    await amigosStore.fetchByUsuario(authStore.usuario.idUsuario)
+  }
+})
+
+// ── Participantes ─────────────────────────────────────────────────────────────
+const participantesSeleccionados = ref<Amigo[]>([])
+
+// Amigos que aún no han sido añadidos como participantes, filtrados por búsqueda
+const amigosDisponibles = computed(() =>
+  amigosStore.amigos.filter(a =>
+    !participantesSeleccionados.value.some(p => p.idUsuario === a.idUsuario) &&
+    a.nombre.toLowerCase().includes(filtroAmigos.value.toLowerCase())
+  )
+)
+
+function añadirParticipante(amigo: Amigo) {
+  participantesSeleccionados.value.push(amigo)
+  filtroAmigos.value = ''
+}
+
+function quitarParticipante(id: number) {
+  participantesSeleccionados.value = participantesSeleccionados.value.filter(p => p.idUsuario !== id)
+}
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 const schema = yup.object({
@@ -260,14 +305,14 @@ const schema = yup.object({
 // ── Form ──────────────────────────────────────────────────────────────────────
 const { errors, handleSubmit: veeHandleSubmit, defineField } = useForm({ validationSchema: schema })
 
-const [titulo, tituloAttrs]             = defineField('titulo')
-const [descripcion, descripcionAttrs]   = defineField('descripcion')
+const [titulo, tituloAttrs]               = defineField('titulo')
+const [descripcion, descripcionAttrs]     = defineField('descripcion')
 const [fechaApertura, fechaAperturaAttrs] = defineField('fechaApertura')
 
 // ── Archivos ──────────────────────────────────────────────────────────────────
-const archivos = ref<File[]>([])
+const archivos     = ref<File[]>([])
 const fileInputRef = ref<HTMLInputElement | null>(null)
-const isDragging = ref(false)
+const isDragging   = ref(false)
 
 function triggerFileInput() { fileInputRef.value?.click() }
 function onFileChange(e: Event) {
@@ -294,46 +339,6 @@ function getTipo(file: File): string {
   return 'documento'
 }
 
-// ── Participantes ─────────────────────────────────────────────────────────────
-const participanteInput = ref('')
-const participantesSeleccionados = ref<Usuario[]>([])
-const sugerencias = ref<Usuario[]>([])
-let busquedaTimeout: ReturnType<typeof setTimeout> | null = null
-
-async function buscarUsuarios() {
-  if (busquedaTimeout) clearTimeout(busquedaTimeout)
-  const q = participanteInput.value.trim()
-  if (q.length < 2) { sugerencias.value = []; return }
-
-  busquedaTimeout = setTimeout(async () => {
-    try {
-      const resultados = await api.get<Usuario[]>(`/Usuario/search?nombre=${encodeURIComponent(q)}`)
-      sugerencias.value = resultados.filter(
-        u => u.idUsuario !== authStore.usuario?.idUsuario &&
-             !participantesSeleccionados.value.some(p => p.idUsuario === u.idUsuario)
-      )
-    } catch {
-      sugerencias.value = []
-    }
-  }, 300)
-}
-
-function seleccionarUsuario(u: Usuario) {
-  if (!participantesSeleccionados.value.some(p => p.idUsuario === u.idUsuario)) {
-    participantesSeleccionados.value.push(u)
-  }
-  participanteInput.value = ''
-  sugerencias.value = []
-}
-
-function añadirPorNombre() {
-  if (sugerencias.value.length > 0) seleccionarUsuario(sugerencias.value[0])
-}
-
-function quitarParticipante(id: number) {
-  participantesSeleccionados.value = participantesSeleccionados.value.filter(p => p.idUsuario !== id)
-}
-
 // ── Submit ────────────────────────────────────────────────────────────────────
 const handleSubmit = veeHandleSubmit(async (values) => {
   errorServidor.value = ''
@@ -353,12 +358,14 @@ const handleSubmit = veeHandleSubmit(async (values) => {
 
     const idCapsula = nuevaCapsula.idCapsula
 
+    // Añadir al creador
     await api.post('/UsuarioCapsula', {
       idUsuario: authStore.usuario!.idUsuario,
       idCapsula,
       rol: 'creador'
     })
 
+    // Añadir participantes (solo amigos seleccionados)
     if (participantesSeleccionados.value.length > 0) {
       await Promise.all(
         participantesSeleccionados.value.map(u =>
@@ -367,6 +374,7 @@ const handleSubmit = veeHandleSubmit(async (values) => {
       )
     }
 
+    // Subir archivos
     if (archivos.value.length > 0) {
       await Promise.all(
         archivos.value.map(file => {
@@ -379,6 +387,7 @@ const handleSubmit = veeHandleSubmit(async (values) => {
       )
     }
 
+    // Guardar emoji en localStorage
     const emojisGuardados = JSON.parse(localStorage.getItem('capsula_emojis') || '{}')
     emojisGuardados[idCapsula] = emojiSeleccionado.value
     localStorage.setItem('capsula_emojis', JSON.stringify(emojisGuardados))

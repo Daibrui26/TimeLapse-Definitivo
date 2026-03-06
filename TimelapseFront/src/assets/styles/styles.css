@@ -1782,5 +1782,32 @@
     display: none;
   }
 }
+.amigos-titulo {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 35px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  margin-bottom: 16px;
+}
+.amigos-titulo h1 {
+  margin: 0;
+}
+
+.amigo__btn-eliminar {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #ccc;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+.amigo__btn-eliminar:hover {
+  color: #e53e3e;
+  background: #fde8e8;
+}
 
 /*# sourceMappingURL=styles.css.map */

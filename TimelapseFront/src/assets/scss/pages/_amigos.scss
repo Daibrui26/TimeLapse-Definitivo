@@ -1,0 +1,35 @@
+// ── Página de amigos ──────────────────────────────────────────────────────────
+
+// Título "Mis Amigos" con fondo blanco
+.amigos-titulo {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 35px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  width: 100%;
+  margin-bottom: 16px;
+
+  h1 {
+    margin: 0;
+  }
+}
+
+// Botón de eliminar amigo en la lista
+.amigo {
+  &__btn-eliminar {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #ccc;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+
+    &:hover {
+      color: #e53e3e;
+      background: #fde8e8;
+    }
+  }
+}
