@@ -58,6 +58,12 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/amigos',
+      name: 'Amigos',
+      component: () => import('@/views/AmigosView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/capsula/:id',
       name: 'CapsulaDetalle',
       component: () => import('@/views/CapsulaDetalleView.vue'),

@@ -17,10 +17,10 @@
             <img src="@/assets/img/Perfil.png" class="menu-nav__icon" alt="Perfil" />
             Mi Perfil
           </RouterLink>
-          <a href="#" class="menu-nav__item">
-            <img src="@/assets/img/Stats.png" class="menu-nav__icon" alt="Stats" />
-            Estadísticas de vida
-          </a>
+          <RouterLink to="/amigos" class="menu-nav__item">
+            <img src="@/assets/img/Perfil.png" class="menu-nav__icon" alt="Perfil" />
+            Amigos
+          </RouterLink>
           <RouterLink to="/tus-capsulas" class="menu-nav__item">
             <img src="@/assets/img/Reloj.png" class="menu-nav__icon" alt="Cápsulas" />
             Tus Cápsulas
