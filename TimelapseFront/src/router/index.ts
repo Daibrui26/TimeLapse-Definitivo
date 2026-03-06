@@ -58,6 +58,19 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/amigos',
+      name: 'Amigos',
+      component: () => import('@/views/AmigosView.vue'),
+      meta: { requiresAuth: true }
+    },
+    // ── Perfil público de un amigo ────────────────────────────────────────────
+    {
+      path: '/amigos/:id',
+      name: 'AmigoPerfil',
+      component: () => import('@/views/AmigoPerfilView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/capsula/:id',
       name: 'CapsulaDetalle',
       component: () => import('@/views/CapsulaDetalleView.vue'),
