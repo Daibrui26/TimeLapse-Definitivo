@@ -42,12 +42,12 @@
             <img src="@/assets/img/Contacto.png" class="menu-nav__icon" alt="Contacto" />
             Contacto
           </RouterLink>
-          <a href="#" class="menu-nav__item">
+          <RouterLink to="/sobre-nosotros" class="menu-nav__item">
             <span class="menu-nav__star">★</span> Sobre Nosotros
-          </a>
-          <a href="#" class="menu-nav__item">
+          </RouterLink>
+          <RouterLink to="/politica-privacidad" class="menu-nav__item">
             <span class="menu-nav__star">★</span> Política &amp; Privacidad
-          </a>
+          </RouterLink>
         </nav>
       </section>
 

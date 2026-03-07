@@ -90,6 +90,20 @@ const router = createRouter({
       component: () => import('@/views/CapsulaDetalleView.vue'),
       meta: { requiresAuth: true }
     },
+    // ── Política & Privacidad ─────────────────────────────────────────────────
+    {
+      path: '/politica-privacidad',
+      name: 'PoliticaPrivacidad',
+      component: () => import('@/views/PoliticaPrivacidadView.vue'),
+      meta: { requiresAuth: true }
+    },
+    // ── Sobre Nosotros ────────────────────────────────────────────────────────
+    {
+      path: '/sobre-nosotros',
+      name: 'SobreNosotros',
+      component: () => import('@/views/SobreNosotrosView.vue'),
+      meta: { requiresAuth: true }
+    },
     // ── Admin ─────────────────────────────────────────────────────────────────
     {
       path: '/admin',
