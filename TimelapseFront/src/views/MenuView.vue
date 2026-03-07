@@ -29,10 +29,10 @@
             <img src="@/assets/img/Stats.png" class="menu-nav__icon" alt="Admin" />
             Panel de Administración
           </RouterLink>
-          <a href="#" class="menu-nav__item">
+          <RouterLink to="/notificaciones" class="menu-nav__item">
             <img src="@/assets/img/Bandeja.png" class="menu-nav__icon" alt="Bandeja" />
             Bandeja de Entrada
-          </a>
+          </RouterLink>
         </nav>
       </section>
 
