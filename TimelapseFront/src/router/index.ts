@@ -63,6 +63,20 @@ const router = createRouter({
       component: () => import('@/views/AmigosView.vue'),
       meta: { requiresAuth: true }
     },
+    // ── Buscar usuarios ───────────────────────────────────────────────────────
+    {
+      path: '/buscar',
+      name: 'Buscar',
+      component: () => import('@/views/BuscarUsuariosView.vue'),
+      meta: { requiresAuth: true }
+    },
+    // ── Notificaciones ────────────────────────────────────────────────────────
+    {
+      path: '/notificaciones',
+      name: 'Notificaciones',
+      component: () => import('@/views/NotificacionesView.vue'),
+      meta: { requiresAuth: true }
+    },
     // ── Perfil público de un amigo ────────────────────────────────────────────
     {
       path: '/amigos/:id',
