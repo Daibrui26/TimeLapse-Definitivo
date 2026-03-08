@@ -13,7 +13,11 @@
         <section class="card card--perfil" style="width:100%">
           <div class="perfil-user">
             <div class="perfil-user__avatar">
-              <img src="@/assets/img/Perfil.png" alt="Usuario" class="perfil-user__img" />
+              <img
+                :src="amigo.fotoPerfil || perfilFallback"
+                alt="Usuario"
+                class="perfil-user__img"
+              />
             </div>
             <h2 class="perfil-user__name">{{ amigo.nombre }}</h2>
           </div>
@@ -63,11 +67,13 @@ import BottomNav from '@/components/BottomNav.vue'
 import CapsuleItem from '@/components/CapsuleItem.vue'
 import { api } from '@/services/api'
 import { useAuthStore } from '@/stores/auth'
+import perfilFallback from '@/assets/img/Perfil.png'
 
 interface Usuario {
   idUsuario: number
   nombre: string
   email: string
+  fotoPerfil?: string | null
 }
 
 interface Capsula {
@@ -81,11 +87,11 @@ const route     = useRoute()
 const router    = useRouter()
 const authStore = useAuthStore()
 
-const amigo          = ref<Usuario | null>(null)
-const capsulas       = ref<Capsula[]>([])
-const loading        = ref(true)
+const amigo           = ref<Usuario | null>(null)
+const capsulas        = ref<Capsula[]>([])
+const loading         = ref(true)
 const loadingCapsulas = ref(true)
-const error          = ref('')
+const error           = ref('')
 
 const capsulasPúblicas = computed(() =>
   capsulas.value.filter(c => c.visibilidad === 'publica')
@@ -94,7 +100,6 @@ const capsulasPúblicas = computed(() =>
 onMounted(async () => {
   const id = Number(route.params.id)
 
-  // Redirigir si intenta ver su propio perfil
   if (id === authStore.usuario?.idUsuario) {
     router.replace('/perfil')
     return

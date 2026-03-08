@@ -110,7 +110,8 @@ const handleLogin = handleSubmit(async (values) => {
       idUsuario: response.idUsuario,
       nombre: response.nombre,
       email: response.email,
-      rol: response.rol
+      rol: response.rol,
+      fotoPerfil: response.fotoPerfil ?? null   // ← incluir siempre
     })
 
     router.push('/home')

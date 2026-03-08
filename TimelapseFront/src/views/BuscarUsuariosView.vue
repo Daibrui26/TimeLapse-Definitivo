@@ -4,12 +4,10 @@
 
     <main class="page__main page__main--capsulas">
 
-      <!-- Título -->
       <div class="amigos-titulo">
         <h1 class="perfil-header__title">Buscar Usuarios</h1>
       </div>
 
-      <!-- Buscador -->
       <div class="card" style="padding: 16px 20px; width: 100%">
         <div style="position: relative;">
           <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:18px; pointer-events:none">🔍</span>
@@ -24,7 +22,6 @@
         </div>
       </div>
 
-      <!-- Estado: cargando -->
       <p
         v-if="cargando"
         style="text-align:center; color:#697C9F; padding: 20px 0; font-size:14px"
@@ -32,7 +29,6 @@
         Buscando...
       </p>
 
-      <!-- Estado: sin resultados -->
       <div
         v-else-if="query.length >= 2 && resultados.length === 0"
         class="capsulas-empty"
@@ -43,7 +39,6 @@
         </p>
       </div>
 
-      <!-- Lista de resultados -->
       <section v-else-if="resultados.length > 0" class="capsulas-list">
         <div
           v-for="usuario in resultados"
@@ -53,7 +48,7 @@
           @click="verPerfil(usuario.idUsuario)"
         >
           <img
-            src="@/assets/img/Perfil.png"
+            :src="usuario.fotoPerfil || perfilFallback"
             alt="Avatar"
             class="card__profile-img"
             style="flex-shrink:0"
@@ -64,7 +59,6 @@
             <p class="capsula-item__date">{{ usuario.email }}</p>
           </div>
 
-          <!-- Botón de acción según estado de la relación -->
           <button
             class="solicitud-btn"
             :class="claseBtnSolicitud(usuario.idUsuario)"
@@ -76,7 +70,6 @@
         </div>
       </section>
 
-      <!-- Estado inicial: escribe para buscar -->
       <div
         v-else
         class="card"
@@ -104,11 +97,13 @@ import { useAuthStore } from '@/stores/auth'
 import { useToast } from '@/composables/useToast'
 import type { Amistad } from '@/services/amigosService'
 import type { Notificacion } from '@/services/notificacionesService'
+import perfilFallback from '@/assets/img/Perfil.png'
 
 interface Usuario {
   idUsuario: number
   nombre: string
   email: string
+  fotoPerfil?: string | null
 }
 
 const router    = useRouter()
@@ -119,12 +114,10 @@ const query      = ref('')
 const resultados = ref<Usuario[]>([])
 const cargando   = ref(false)
 
-// Todas las amistades donde el usuario actual está implicado
 const misAmistades = ref<Amistad[]>([])
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-// ── Cargar amistades al montar ────────────────────────────────────────────────
 onMounted(async () => {
   try {
     const todas = await api.get<Amistad[]>('/Amistad')
@@ -138,7 +131,6 @@ onMounted(async () => {
   }
 })
 
-// ── Búsqueda con debounce ─────────────────────────────────────────────────────
 function onInput() {
   if (debounceTimer) clearTimeout(debounceTimer)
 
@@ -156,7 +148,6 @@ async function buscar() {
     const todos = await api.get<Usuario[]>(
       `/Usuario/search?nombre=${encodeURIComponent(query.value)}`
     )
-    // Excluir al propio usuario del resultado
     resultados.value = todos.filter(
       u => u.idUsuario !== authStore.usuario?.idUsuario
     )
@@ -168,8 +159,6 @@ async function buscar() {
   }
 }
 
-// ── Estado de la relación con cada usuario ────────────────────────────────────
-// Devuelve: 'amigos' | 'enviada' | 'recibida' | 'ninguno'
 function estadoRelacion(idOtro: number): string {
   const yo = authStore.usuario?.idUsuario
   const rel = misAmistades.value.find(
@@ -195,25 +184,22 @@ function textoBtnSolicitud(idOtro: number): string {
 
 function claseBtnSolicitud(idOtro: number): string {
   const estado = estadoRelacion(idOtro)
-  if (estado === 'amigos')  return 'solicitud-btn--amigos'
-  if (estado === 'enviada') return 'solicitud-btn--enviada'
+  if (estado === 'amigos')   return 'solicitud-btn--amigos'
+  if (estado === 'enviada')  return 'solicitud-btn--enviada'
   if (estado === 'recibida') return 'solicitud-btn--recibida'
   return 'solicitud-btn--añadir'
 }
 
-// ── Enviar solicitud ──────────────────────────────────────────────────────────
 async function enviarSolicitud(destino: Usuario) {
   if (!authStore.usuario) return
 
   try {
-    // 1. Crear la amistad en estado 'pendiente'
     const nuevaAmistad = await api.post<Amistad>('/Amistad', {
       idUsuario1: authStore.usuario.idUsuario,
       idUsuario2: destino.idUsuario,
       estado: 'pendiente'
     })
 
-    // 2. Crear notificación para el destinatario
     await api.post<Notificacion>('/Notificacion', {
       tipo: 'solicitud_amistad',
       mensaje: `${authStore.usuario.nombre} te ha enviado una solicitud de amistad.`,
@@ -223,23 +209,19 @@ async function enviarSolicitud(destino: Usuario) {
       idCapsula: null
     })
 
-    // 3. Actualizar estado local para que el botón cambie al instante
     misAmistades.value.push(nuevaAmistad)
-
     toast.success(`Solicitud enviada a ${destino.nombre}`)
   } catch (e: any) {
     toast.error(e?.message || 'Error al enviar la solicitud.')
   }
 }
 
-// ── Navegar al perfil ─────────────────────────────────────────────────────────
 function verPerfil(idUsuario: number) {
   router.push(`/amigos/${idUsuario}`)
 }
 </script>
 
 <style scoped>
-/* Botón de solicitud */
 .solicitud-btn {
   flex-shrink: 0;
   border: none;

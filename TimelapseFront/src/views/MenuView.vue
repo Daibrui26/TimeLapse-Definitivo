@@ -4,7 +4,11 @@
 
     <main class="page__main">
       <section class="card card--profile">
-        <img src="@/assets/img/Perfil.png" alt="Perfil" class="card__profile-img" />
+        <img
+          :src="fotoPerfil"
+          alt="Perfil"
+          class="card__profile-img"
+        />
         <div class="card__profile-info">
           <h2 class="card__title">{{ authStore.usuario?.nombre }}</h2>
           <p class="card__subtitle">{{ authStore.usuario?.email }}</p>
@@ -14,11 +18,11 @@
       <section class="card card--menu">
         <nav class="menu-nav">
           <RouterLink to="/perfil" class="menu-nav__item">
-            <img src="@/assets/img/Perfil.png" class="menu-nav__icon" alt="Perfil" />
+            <img :src="fotoPerfil" class="menu-nav__icon" alt="Perfil" />
             Mi Perfil
           </RouterLink>
           <RouterLink to="/amigos" class="menu-nav__item">
-            <img src="@/assets/img/Perfil.png" class="menu-nav__icon" alt="Perfil" />
+            <img :src="fotoPerfil" class="menu-nav__icon" alt="Perfil" />
             Amigos
           </RouterLink>
           <RouterLink to="/tus-capsulas" class="menu-nav__item">
@@ -76,17 +80,23 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import AppHeader from '@/components/AppHeader.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useToast } from '@/composables/useToast'
 import { useConfirm } from '@/composables/useConfirm'
 import { api } from '@/services/api'
+import perfilFallback from '@/assets/img/Perfil.png'
 
 const router    = useRouter()
 const authStore = useAuthStore()
 const toast     = useToast()
 const { confirm } = useConfirm()
+
+const fotoPerfil = computed(() =>
+  authStore.usuario?.fotoPerfil || perfilFallback
+)
 
 function cerrarSesion() {
   authStore.logout()
