@@ -1,7 +1,6 @@
 <template>
   <nav class="nav-bottom">
 
-    <!-- Inicio -->
     <RouterLink
       to="/home"
       class="nav-bottom__btn"
@@ -9,7 +8,6 @@
       title="Inicio"
     >🏠</RouterLink>
 
-    <!-- Buscar usuarios -->
     <RouterLink
       to="/buscar"
       class="nav-bottom__btn"
@@ -17,7 +15,6 @@
       title="Buscar"
     >🔍</RouterLink>
 
-    <!-- Tus cápsulas -->
     <RouterLink
       to="/tus-capsulas"
       class="nav-bottom__btn"
@@ -25,7 +22,6 @@
       title="Tus cápsulas"
     >⏳</RouterLink>
 
-    <!-- Notificaciones con badge -->
     <RouterLink
       to="/notificaciones"
       class="nav-bottom__btn nav-bottom__btn--notif"
@@ -33,10 +29,11 @@
       title="Notificaciones"
     >
       🔔
-      <span v-if="noLeidas > 0" class="nav-bottom__badge">{{ noLeidas > 9 ? '9+' : noLeidas }}</span>
+      <span v-if="store.noLeidas > 0" class="nav-bottom__badge">
+        {{ store.noLeidas > 9 ? '9+' : store.noLeidas }}
+      </span>
     </RouterLink>
 
-    <!-- Menú / perfil -->
     <RouterLink
       to="/menu"
       class="nav-bottom__btn"
@@ -48,27 +45,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { api } from '@/services/api'
-import { useAuthStore } from '@/stores/auth'
-import type { Notificacion } from '@/services/notificacionesService'
+import { useNotificacionesStore } from '@/stores/notificaciones'
 
-const route     = useRoute()
-const authStore = useAuthStore()
+const route = useRoute()
+const store = useNotificacionesStore()
 
-const noLeidas = ref(0)
-
-onMounted(async () => {
-  try {
-    const todas = await api.get<Notificacion[]>('/Notificacion')
-    noLeidas.value = todas.filter(
-      n => n.idUsuario === authStore.usuario?.idUsuario && !n.leida
-    ).length
-  } catch {
-    // Silenciar error — el badge simplemente no aparece
-  }
-})
+onMounted(() => store.cargar())
 </script>
 
 <style scoped>

@@ -4,49 +4,45 @@
 
     <main class="page__main page__main--capsulas">
 
-      <!-- Título -->
       <div class="amigos-titulo">
         <h1 class="perfil-header__title">
           Notificaciones
           <span
-            v-if="noLeidas > 0"
+            v-if="store.noLeidas > 0"
             style="
               background:#C85C5C; color:#fff;
               font-size:12px; font-weight:700;
               padding:2px 9px; border-radius:20px;
               margin-left:8px; vertical-align:middle;
             "
-          >{{ noLeidas }}</span>
+          >{{ store.noLeidas }}</span>
         </h1>
       </div>
 
-      <p v-if="cargando" style="text-align:center; color:#697C9F; padding:30px 0">
+      <p v-if="store.cargando" style="text-align:center; color:#697C9F; padding:30px 0">
         Cargando notificaciones...
       </p>
 
-      <div v-else-if="notificaciones.length === 0" class="capsulas-empty">
+      <div v-else-if="store.notificaciones.length === 0" class="capsulas-empty">
         <p style="font-size:32px">🔔</p>
         <p class="capsulas-empty__text" style="font-size:15px">
           No tienes notificaciones.
         </p>
       </div>
 
-      <!-- Lista de notificaciones -->
       <section v-else class="capsulas-list">
         <div
-          v-for="notif in notificaciones"
+          v-for="notif in store.notificaciones"
           :key="notif.idNotificacion"
           class="notif-card"
           :class="{ 'notif-card--leida': notif.leida }"
         >
-          <!-- Icono según tipo -->
           <span class="notif-card__icono">{{ iconoTipo(notif.tipo) }}</span>
 
           <div class="notif-card__contenido">
             <p class="notif-card__mensaje">{{ notif.mensaje }}</p>
             <p class="notif-card__fecha">{{ formatFecha(notif.fechaCreacion) }}</p>
 
-            <!-- Acciones para solicitud de amistad -->
             <div
               v-if="notif.tipo === 'solicitud_amistad' && !notif.leida"
               class="notif-card__acciones"
@@ -67,7 +63,6 @@
               </button>
             </div>
 
-            <!-- Ya procesada -->
             <p
               v-else-if="notif.tipo === 'solicitud_amistad' && notif.leida"
               style="font-size:12px; color:#aaa; margin-top:4px; font-style:italic"
@@ -76,16 +71,14 @@
             </p>
           </div>
 
-          <!-- Punto de no leída -->
           <span v-if="!notif.leida" class="notif-card__punto" />
         </div>
       </section>
 
-      <!-- Limpiar todas leídas -->
       <button
-        v-if="notificaciones.some(n => n.leida)"
-        class="btn btn--cancel"
-        style="margin-top:8px; font-size:13px; padding:10px 20px"
+        v-if="store.notificaciones.some(n => n.leida)"
+        class="btn-limpiar"
+        style="margin-top:8px"
         @click="limpiarLeidas"
       >
         🗑 Limpiar notificaciones leídas
@@ -98,69 +91,48 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import AppHeader from '@/components/AppHeader.vue'
 import BottomNav from '@/components/BottomNav.vue'
 import { api } from '@/services/api'
 import { useAuthStore } from '@/stores/auth'
+import { useNotificacionesStore } from '@/stores/notificaciones'
 import { useToast } from '@/composables/useToast'
 import type { Notificacion } from '@/services/notificacionesService'
 import type { Amistad } from '@/services/amigosService'
 
 const authStore = useAuthStore()
+const store     = useNotificacionesStore()
 const toast     = useToast()
 
-const notificaciones = ref<Notificacion[]>([])
-const cargando       = ref(true)
-const procesando     = ref<number | null>(null)   // id de la notif en proceso
+const procesando = ref<number | null>(null)
 
-const noLeidas = computed(() => notificaciones.value.filter(n => !n.leida).length)
+onMounted(() => store.cargar())
 
-// ── Montaje ───────────────────────────────────────────────────────────────────
-onMounted(async () => {
-  await cargar()
+onUnmounted(async () => {
+  const noInteractivas = store.notificaciones.filter(
+    n => !n.leida && n.tipo !== 'solicitud_amistad'
+  )
+  await Promise.all(noInteractivas.map(n => store.marcarLeida(n)))
 })
-
-async function cargar() {
-  cargando.value = true
-  try {
-    const todas = await api.get<Notificacion[]>('/Notificacion')
-    // Solo las del usuario actual, ordenadas de más reciente a más antigua
-    notificaciones.value = todas
-      .filter(n => n.idUsuario === authStore.usuario?.idUsuario)
-      .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
-  } catch {
-    toast.error('Error al cargar las notificaciones.')
-  } finally {
-    cargando.value = false
-  }
-}
 
 // ── Aceptar solicitud ─────────────────────────────────────────────────────────
 async function aceptarSolicitud(notif: Notificacion) {
   procesando.value = notif.idNotificacion
   try {
-    // 1. Buscar la amistad pendiente donde yo soy el destinatario (idUsuario2)
     const amistades = await api.get<Amistad[]>('/Amistad')
     const amistad = amistades.find(
-      a =>
-        a.idUsuario2 === authStore.usuario?.idUsuario &&
-        a.estado === 'pendiente'
+      a => a.idUsuario2 === authStore.usuario?.idUsuario && a.estado === 'pendiente'
     )
 
     if (!amistad) {
       toast.error('No se encontró la solicitud. Puede que ya haya sido gestionada.')
-      await marcarLeida(notif)
+      await store.marcarLeida(notif)
       return
     }
 
-    // 2. Actualizar estado de la amistad a 'aceptada'
-    await api.put(`/Amistad/${amistad.idAmistad}`, {
-      ...amistad,
-      estado: 'aceptada'
-    })
+    await api.put(`/Amistad/${amistad.idAmistad}`, { ...amistad, estado: 'aceptada' })
 
-    // 3. Notificar al remitente que fue aceptado
     await api.post('/Notificacion', {
       tipo: 'solicitud_aceptada',
       mensaje: `${authStore.usuario?.nombre} ha aceptado tu solicitud de amistad.`,
@@ -170,9 +142,7 @@ async function aceptarSolicitud(notif: Notificacion) {
       idCapsula: null
     })
 
-    // 4. Marcar notificación como leída
-    await marcarLeida(notif)
-
+    await store.marcarLeida(notif)
     toast.success('¡Solicitud aceptada! Ahora sois amigos.')
   } catch (e: any) {
     toast.error(e?.message || 'Error al aceptar la solicitud.')
@@ -185,22 +155,13 @@ async function aceptarSolicitud(notif: Notificacion) {
 async function rechazarSolicitud(notif: Notificacion) {
   procesando.value = notif.idNotificacion
   try {
-    // 1. Buscar la amistad pendiente
     const amistades = await api.get<Amistad[]>('/Amistad')
     const amistad = amistades.find(
-      a =>
-        a.idUsuario2 === authStore.usuario?.idUsuario &&
-        a.estado === 'pendiente'
+      a => a.idUsuario2 === authStore.usuario?.idUsuario && a.estado === 'pendiente'
     )
+    if (amistad) await api.delete(`/Amistad/${amistad.idAmistad}`)
 
-    if (amistad) {
-      // 2. Eliminar la amistad
-      await api.delete(`/Amistad/${amistad.idAmistad}`)
-    }
-
-    // 3. Marcar notificación como leída (sin notificar al remitente)
-    await marcarLeida(notif)
-
+    await store.marcarLeida(notif)
     toast.info('Solicitud rechazada.')
   } catch (e: any) {
     toast.error(e?.message || 'Error al rechazar la solicitud.')
@@ -209,37 +170,28 @@ async function rechazarSolicitud(notif: Notificacion) {
   }
 }
 
-// ── Marcar como leída ─────────────────────────────────────────────────────────
-async function marcarLeida(notif: Notificacion) {
-  const actualizada = await api.put<Notificacion>(`/Notificacion/${notif.idNotificacion}`, {
-    ...notif,
-    leida: true
-  })
-  const idx = notificaciones.value.findIndex(n => n.idNotificacion === notif.idNotificacion)
-  if (idx !== -1) notificaciones.value[idx] = actualizada
-}
-
 // ── Limpiar leídas ────────────────────────────────────────────────────────────
 async function limpiarLeidas() {
-  const leidas = notificaciones.value.filter(n => n.leida)
-  await Promise.all(leidas.map(n => api.delete(`/Notificacion/${n.idNotificacion}`)))
-  notificaciones.value = notificaciones.value.filter(n => !n.leida)
-  toast.success('Notificaciones leídas eliminadas.')
+  try {
+    await store.limpiarLeidas()
+    toast.success('Notificaciones leídas eliminadas.')
+  } catch {
+    toast.error('Error al limpiar las notificaciones.')
+  }
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function iconoTipo(tipo: string): string {
-  if (tipo === 'solicitud_amistad') return '👤'
+  if (tipo === 'solicitud_amistad')  return '👤'
   if (tipo === 'solicitud_aceptada') return '✅'
-  if (tipo === 'alerta') return '⚠️'
+  if (tipo === 'alerta')             return '⚠️'
   return '🔔'
 }
 
 function formatFecha(fecha: string): string {
   if (!fecha) return ''
   return new Date(fecha).toLocaleDateString('es-ES', {
-    day: '2-digit', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit'
+    day: '2-digit', month: 'short', year: 'numeric'
   })
 }
 </script>
@@ -324,7 +276,6 @@ function formatFecha(fecha: string): string {
   color: #fff;
 }
 
-/* Punto indicador de no leída */
 .notif-card__punto {
   width: 10px;
   height: 10px;
@@ -332,5 +283,20 @@ function formatFecha(fecha: string): string {
   background: #C85C5C;
   flex-shrink: 0;
   margin-top: 4px;
+}
+
+.btn-limpiar {
+  background: #C85C5C;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-limpiar:hover {
+  background: #a84444;
 }
 </style>
