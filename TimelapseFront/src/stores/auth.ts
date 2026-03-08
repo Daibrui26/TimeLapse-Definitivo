@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 export interface UsuarioSesion {
   idUsuario: number
@@ -12,15 +12,17 @@ export interface UsuarioSesion {
 export const useAuthStore = defineStore('auth', () => {
   const usuario = ref<UsuarioSesion | null>(null)
 
-  function setUsuario(u: UsuarioSesion) {
-    usuario.value = u
+  const isLoggedIn = computed(() => usuario.value !== null)
+  const nombreUsuario = computed(() => usuario.value?.nombre ?? '')
+  const isAdmin = computed(() => usuario.value?.rol === 'admin')
+
+  function setUsuario(data: UsuarioSesion) {
+    usuario.value = data
   }
 
-  function clearUsuario() {
+  function logout() {
     usuario.value = null
   }
 
-  return { usuario, setUsuario, clearUsuario }
-}, {
-  persist: true
+  return { usuario, isLoggedIn, nombreUsuario, isAdmin, setUsuario, logout }
 })
