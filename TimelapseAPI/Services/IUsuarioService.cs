@@ -14,5 +14,6 @@ namespace TimelapseAPI.Services
         Task UpdateAsync(Usuario usuario);
         Task DeleteAsync(int id);
         Task<LoginResponseDTO?> LoginAsync(LoginRequestDTO request);
+        Task<string> ActualizarFotoAsync(int idUsuario, IFormFile archivo);
     }
 }
