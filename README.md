@@ -18,6 +18,7 @@ esto:
 
 -----------------------------------------------------------------
 CREATE DATABASE TimelapseDB;
+USE TimelapseDB;
 -----------------------------------------------------------------
 
 CREATE TABLE Usuario (
@@ -26,6 +27,8 @@ CREATE TABLE Usuario (
     Email NVARCHAR(150) NOT NULL UNIQUE,
     Contraseña NVARCHAR(255) NOT NULL,
     Rol NVARCHAR(20) NOT NULL DEFAULT 'usuario',
+    foto_perfil NVARCHAR(500) NULL,
+    foto_perfil_public_id NVARCHAR(200) NULL;
     CONSTRAINT CHK_Usuario_Rol CHECK (Rol IN ('admin', 'usuario'))
 );
 
