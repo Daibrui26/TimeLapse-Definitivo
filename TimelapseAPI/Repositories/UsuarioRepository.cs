@@ -24,21 +24,14 @@ namespace TimelapseAPI.Repositories
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                string query = "SELECT id_usuario, nombre, email, contraseña, rol FROM Usuario";
+                string query = "SELECT id_usuario, nombre, email, contraseña, rol, foto_perfil, foto_perfil_public_id FROM Usuario";
 
                 using (var command = new SqlCommand(query, connection))
                 using (var reader = await command.ExecuteReaderAsync())
                 {
                     while (await reader.ReadAsync())
                     {
-                        usuarios.Add(new Usuario
-                        {
-                            IdUsuario = reader.GetInt32(0),
-                            Nombre = reader.GetString(1),
-                            Email = reader.GetString(2),
-                            Contraseña = reader.GetString(3),
-                            Rol = reader.GetString(4)
-                        });
+                        usuarios.Add(MapUsuario(reader));
                     }
                 }
             }
@@ -52,7 +45,7 @@ namespace TimelapseAPI.Repositories
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                string query = "SELECT id_usuario, nombre, email, contraseña, rol FROM Usuario WHERE id_usuario = @Id";
+                string query = "SELECT id_usuario, nombre, email, contraseña, rol, foto_perfil, foto_perfil_public_id FROM Usuario WHERE id_usuario = @Id";
 
                 using (var command = new SqlCommand(query, connection))
                 {
@@ -62,14 +55,7 @@ namespace TimelapseAPI.Repositories
                     {
                         if (await reader.ReadAsync())
                         {
-                            return new Usuario
-                            {
-                                IdUsuario = reader.GetInt32(0),
-                                Nombre = reader.GetString(1),
-                                Email = reader.GetString(2),
-                                Contraseña = reader.GetString(3),
-                                Rol = reader.GetString(4)
-                            };
+                            return MapUsuario(reader);
                         }
                     }
                 }
@@ -84,7 +70,7 @@ namespace TimelapseAPI.Repositories
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                string query = "SELECT id_usuario, nombre, email, contraseña, rol FROM Usuario WHERE email = @Email";
+                string query = "SELECT id_usuario, nombre, email, contraseña, rol, foto_perfil, foto_perfil_public_id FROM Usuario WHERE email = @Email";
 
                 using (var command = new SqlCommand(query, connection))
                 {
@@ -94,14 +80,7 @@ namespace TimelapseAPI.Repositories
                     {
                         if (await reader.ReadAsync())
                         {
-                            return new Usuario
-                            {
-                                IdUsuario = reader.GetInt32(0),
-                                Nombre = reader.GetString(1),
-                                Email = reader.GetString(2),
-                                Contraseña = reader.GetString(3),
-                                Rol = reader.GetString(4)
-                            };
+                            return MapUsuario(reader);
                         }
                     }
                 }
@@ -119,7 +98,7 @@ namespace TimelapseAPI.Repositories
             {
                 await connection.OpenAsync();
 
-                string query = "SELECT id_usuario, nombre, email, contraseña, rol FROM Usuario WHERE 1=1";
+                string query = "SELECT id_usuario, nombre, email, contraseña, rol, foto_perfil, foto_perfil_public_id FROM Usuario WHERE 1=1";
                 var parameters = new List<SqlParameter>();
 
                 if (!string.IsNullOrWhiteSpace(nombre))
@@ -162,14 +141,7 @@ namespace TimelapseAPI.Repositories
                     {
                         while (await reader.ReadAsync())
                         {
-                            usuarios.Add(new Usuario
-                            {
-                                IdUsuario = reader.GetInt32(0),
-                                Nombre = reader.GetString(1),
-                                Email = reader.GetString(2),
-                                Contraseña = reader.GetString(3),
-                                Rol = reader.GetString(4)
-                            });
+                            usuarios.Add(MapUsuario(reader));
                         }
                     }
                 }
@@ -184,7 +156,9 @@ namespace TimelapseAPI.Repositories
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                string query = "INSERT INTO Usuario (nombre, email, contraseña, rol) VALUES (@Nombre, @Email, @Contraseña, @Rol); SELECT SCOPE_IDENTITY();";
+                string query = @"INSERT INTO Usuario (nombre, email, contraseña, rol, foto_perfil, foto_perfil_public_id) 
+                                 VALUES (@Nombre, @Email, @Contraseña, @Rol, @FotoPerfil, @FotoPerfilPublicId); 
+                                 SELECT SCOPE_IDENTITY();";
 
                 using (var command = new SqlCommand(query, connection))
                 {
@@ -192,7 +166,9 @@ namespace TimelapseAPI.Repositories
                     command.Parameters.AddWithValue("@Email", usuario.Email);
                     command.Parameters.AddWithValue("@Contraseña", usuario.Contraseña);
                     command.Parameters.AddWithValue("@Rol", usuario.Rol);
-                    
+                    command.Parameters.AddWithValue("@FotoPerfil", (object?)usuario.FotoPerfil ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@FotoPerfilPublicId", (object?)usuario.FotoPerfilPublicId ?? DBNull.Value);
+
                     var result = await command.ExecuteScalarAsync();
                     usuario.IdUsuario = Convert.ToInt32(result);
                 }
@@ -205,7 +181,10 @@ namespace TimelapseAPI.Repositories
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
-                string query = "UPDATE Usuario SET nombre=@Nombre, email=@Email, contraseña=@Contraseña, rol=@Rol WHERE id_usuario=@Id";
+                string query = @"UPDATE Usuario 
+                                 SET nombre=@Nombre, email=@Email, contraseña=@Contraseña, rol=@Rol,
+                                     foto_perfil=@FotoPerfil, foto_perfil_public_id=@FotoPerfilPublicId
+                                 WHERE id_usuario=@Id";
 
                 using (var command = new SqlCommand(query, connection))
                 {
@@ -214,6 +193,8 @@ namespace TimelapseAPI.Repositories
                     command.Parameters.AddWithValue("@Email", usuario.Email);
                     command.Parameters.AddWithValue("@Contraseña", usuario.Contraseña);
                     command.Parameters.AddWithValue("@Rol", usuario.Rol);
+                    command.Parameters.AddWithValue("@FotoPerfil", (object?)usuario.FotoPerfil ?? DBNull.Value);
+                    command.Parameters.AddWithValue("@FotoPerfilPublicId", (object?)usuario.FotoPerfilPublicId ?? DBNull.Value);
 
                     var rows = await command.ExecuteNonQueryAsync();
                     if (rows == 0) return null;
@@ -225,64 +206,79 @@ namespace TimelapseAPI.Repositories
 
         // DELETE
         public async Task<bool> DeleteAsync(int id)
-{
-    using (var connection = new SqlConnection(_connectionString))
-    {
-        await connection.OpenAsync();
-        using var transaction = connection.BeginTransaction();
-
-        try
         {
-            // 1. Borrar comentarios del usuario
-            using (var cmd = new SqlCommand(
-                "DELETE FROM Comentario WHERE id_usuario = @Id", connection, transaction))
+            using (var connection = new SqlConnection(_connectionString))
             {
-                cmd.Parameters.AddWithValue("@Id", id);
-                await cmd.ExecuteNonQueryAsync();
-            }
+                await connection.OpenAsync();
+                using var transaction = connection.BeginTransaction();
 
-            // 2. Borrar notificaciones del usuario
-            using (var cmd = new SqlCommand(
-                "DELETE FROM Notificacion WHERE id_usuario = @Id", connection, transaction))
-            {
-                cmd.Parameters.AddWithValue("@Id", id);
-                await cmd.ExecuteNonQueryAsync();
-            }
+                try
+                {
+                    // 1. Borrar comentarios del usuario
+                    using (var cmd = new SqlCommand(
+                        "DELETE FROM Comentario WHERE id_usuario = @Id", connection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", id);
+                        await cmd.ExecuteNonQueryAsync();
+                    }
 
-            // 3. Borrar amistades del usuario
-            using (var cmd = new SqlCommand(
-                "DELETE FROM Amistad WHERE id_usuario1 = @Id OR id_usuario2 = @Id", connection, transaction))
-            {
-                cmd.Parameters.AddWithValue("@Id", id);
-                await cmd.ExecuteNonQueryAsync();
-            }
+                    // 2. Borrar notificaciones del usuario
+                    using (var cmd = new SqlCommand(
+                        "DELETE FROM Notificacion WHERE id_usuario = @Id", connection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", id);
+                        await cmd.ExecuteNonQueryAsync();
+                    }
 
-            // 4. Borrar participaciones en cápsulas
-            using (var cmd = new SqlCommand(
-                "DELETE FROM Usuario_Capsula WHERE id_usuario = @Id", connection, transaction))
-            {
-                cmd.Parameters.AddWithValue("@Id", id);
-                await cmd.ExecuteNonQueryAsync();
-            }
+                    // 3. Borrar amistades del usuario
+                    using (var cmd = new SqlCommand(
+                        "DELETE FROM Amistad WHERE id_usuario1 = @Id OR id_usuario2 = @Id", connection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", id);
+                        await cmd.ExecuteNonQueryAsync();
+                    }
 
-            // 5. Borrar el usuario
-            int rows;
-            using (var cmd = new SqlCommand(
-                "DELETE FROM Usuario WHERE id_usuario = @Id", connection, transaction))
-            {
-                cmd.Parameters.AddWithValue("@Id", id);
-                rows = await cmd.ExecuteNonQueryAsync();
-            }
+                    // 4. Borrar participaciones en cápsulas
+                    using (var cmd = new SqlCommand(
+                        "DELETE FROM Usuario_Capsula WHERE id_usuario = @Id", connection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", id);
+                        await cmd.ExecuteNonQueryAsync();
+                    }
 
-            await transaction.CommitAsync();
-            return rows > 0;
+                    // 5. Borrar el usuario
+                    int rows;
+                    using (var cmd = new SqlCommand(
+                        "DELETE FROM Usuario WHERE id_usuario = @Id", connection, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", id);
+                        rows = await cmd.ExecuteNonQueryAsync();
+                    }
+
+                    await transaction.CommitAsync();
+                    return rows > 0;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
-        catch
+
+        // HELPER - mapear SqlDataReader a Usuario
+        private static Usuario MapUsuario(SqlDataReader reader)
         {
-            await transaction.RollbackAsync();
-            throw;
+            return new Usuario
+            {
+                IdUsuario          = reader.GetInt32(0),
+                Nombre             = reader.GetString(1),
+                Email              = reader.GetString(2),
+                Contraseña         = reader.GetString(3),
+                Rol                = reader.GetString(4),
+                FotoPerfil         = reader.IsDBNull(5) ? null : reader.GetString(5),
+                FotoPerfilPublicId = reader.IsDBNull(6) ? null : reader.GetString(6)
+            };
         }
-    }
-}
     }
 }

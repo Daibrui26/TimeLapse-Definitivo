@@ -10,10 +10,12 @@ namespace TimelapseAPI.Services
     public class UsuarioService : IUsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IUploadService _uploadService;
 
-        public UsuarioService(IUsuarioRepository usuarioRepository)
+        public UsuarioService(IUsuarioRepository usuarioRepository, IUploadService uploadService)
         {
             _usuarioRepository = usuarioRepository;
+            _uploadService     = uploadService;
         }
 
         public async Task<List<Usuario>> GetAllAsync()
@@ -86,15 +88,65 @@ namespace TimelapseAPI.Services
             var usuario = await _usuarioRepository.GetByEmailAsync(request.Email);
 
             if (usuario == null || usuario.Contraseña != request.Contraseña)
-                return null; // Credenciales incorrectas
+                return null;
 
             return new LoginResponseDTO
             {
-                IdUsuario = usuario.IdUsuario,
-                Nombre = usuario.Nombre,
-                Email = usuario.Email,
-                Rol = usuario.Rol
+                IdUsuario  = usuario.IdUsuario,
+                Nombre     = usuario.Nombre,
+                Email      = usuario.Email,
+                Rol        = usuario.Rol,
+                FotoPerfil = usuario.FotoPerfil
             };
+        }
+
+        // SUBIR / ACTUALIZAR FOTO DE PERFIL
+        public async Task<string> ActualizarFotoAsync(int idUsuario, IFormFile archivo)
+        {
+            if (archivo == null || archivo.Length == 0)
+                throw new ArgumentException("El archivo está vacío.");
+
+            var usuario = await _usuarioRepository.GetByIdAsync(idUsuario)
+                ?? throw new ArgumentException("Usuario no encontrado.");
+
+            // Borrar foto anterior de Cloudinary si existe
+            if (!string.IsNullOrEmpty(usuario.FotoPerfilPublicId))
+                await _uploadService.DeleteAsync(usuario.FotoPerfilPublicId);
+
+            // Subir nueva foto
+            var url      = await _uploadService.UploadAsync(archivo);
+            var publicId = ExtractPublicId(url);
+
+            usuario.FotoPerfil         = url;
+            usuario.FotoPerfilPublicId = publicId;
+
+            await _usuarioRepository.UpdateAsync(usuario);
+
+            return url;
+        }
+
+        // Extrae el public_id de una URL de Cloudinary
+        // Ejemplo: https://res.cloudinary.com/xxx/image/upload/v123/timelapse/imagenes/abc.jpg
+        //          → timelapse/imagenes/abc
+        private static string ExtractPublicId(string url)
+        {
+            try
+            {
+                var uri      = new Uri(url);
+                var segments = uri.AbsolutePath.Split('/');
+                var idx      = Array.IndexOf(segments, "upload");
+                if (idx < 0) return url;
+
+                // Saltar "upload" y el segmento de versión (vXXXXXX)
+                var pathParts    = segments.Skip(idx + 2).ToArray();
+                var joined       = string.Join("/", pathParts);
+                var dotIdx       = joined.LastIndexOf('.');
+                return dotIdx >= 0 ? joined[..dotIdx] : joined;
+            }
+            catch
+            {
+                return url;
+            }
         }
     }
 }

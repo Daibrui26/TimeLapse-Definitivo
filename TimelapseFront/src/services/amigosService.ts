@@ -11,6 +11,7 @@ export interface Amigo {
   idUsuario: number
   nombre: string
   email: string
+  fotoPerfil?: string | null  
 }
 
 export const amigosService = {

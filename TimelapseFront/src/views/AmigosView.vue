@@ -23,7 +23,11 @@
           style="cursor: pointer"
           @click="verPerfil(amigo.idUsuario)"
         >
-          <img src="@/assets/img/Perfil.png" alt="Amigo" class="card__profile-img" />
+          <img
+            :src="amigo.fotoPerfil || perfilFallback"
+            alt="Amigo"
+            class="card__profile-img"
+          />
 
           <div class="capsula-item__content">
             <h3 class="capsula-item__title">{{ amigo.nombre }}</h3>
@@ -52,6 +56,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useConfirm } from '@/composables/useConfirm'
 import { useToast } from '@/composables/useToast'
 import type { Amigo } from '@/services/amigosService'
+import perfilFallback from '@/assets/img/Perfil.png'
 
 const router      = useRouter()
 const authStore   = useAuthStore()

@@ -170,5 +170,23 @@ namespace TimelapseAPI.Controllers
                 return StatusCode(500, $"Error interno: {ex.Message}");
             }
         }
+        // POST: api/Usuario/5/foto
+[HttpPost("{id}/foto")]
+public async Task<IActionResult> ActualizarFoto(int id, IFormFile archivo)
+{
+    try
+    {
+        var url = await _usuarioService.ActualizarFotoAsync(id, archivo);
+        return Ok(new { fotoPerfil = url });
+    }
+    catch (ArgumentException ex)
+    {
+        return BadRequest(new { mensaje = ex.Message });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { mensaje = ex.Message });
+    }
+}
     }
 }

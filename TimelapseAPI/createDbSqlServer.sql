@@ -18,6 +18,9 @@ CREATE TABLE Usuario (
     Rol NVARCHAR(20) NOT NULL DEFAULT 'usuario',
     CONSTRAINT CHK_Usuario_Rol CHECK (Rol IN ('admin', 'usuario'))
 );
+ALTER TABLE Usuario
+ADD foto_perfil           NVARCHAR(500) NULL,
+    foto_perfil_public_id NVARCHAR(200) NULL;
 
 -- Tabla Capsula
 CREATE TABLE Capsula (

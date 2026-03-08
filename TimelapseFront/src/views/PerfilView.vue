@@ -12,9 +12,30 @@
         </div>
 
         <div class="perfil-user">
-          <div class="perfil-user__avatar">
-            <img src="@/assets/img/Perfil.png" alt="Usuario" class="perfil-user__img" />
+          <!-- AVATAR CLICKEABLE -->
+          <div class="perfil-user__avatar" @click="triggerFotoInput">
+            <img
+              :src="authStore.usuario?.fotoPerfil || '/src/assets/img/Perfil.png'"
+              alt="Usuario"
+              class="perfil-user__img"
+            />
+            <div class="perfil-user__avatar-overlay">
+              <span>📷</span>
+            </div>
           </div>
+
+          <!-- Input oculto -->
+          <input
+            ref="fotoInput"
+            type="file"
+            accept="image/*"
+            style="display: none"
+            @change="subirFoto"
+          />
+
+          <p v-if="subiendo" class="perfil-user__foto-estado">Subiendo foto...</p>
+          <p v-if="errorFoto" class="perfil-user__foto-error">{{ errorFoto }}</p>
+
           <h2 class="perfil-user__name">{{ authStore.usuario?.nombre }}</h2>
           <p class="perfil-user__email">{{ authStore.usuario?.email }}</p>
         </div>
@@ -95,6 +116,51 @@ const authStore = useAuthStore()
 const isEditing = ref(false)
 const errorServidor = ref('')
 
+// ── Foto de perfil ─────────────────────────────────────────────────────────────
+const fotoInput = ref<HTMLInputElement | null>(null)
+const subiendo  = ref(false)
+const errorFoto = ref('')
+
+function triggerFotoInput() {
+  fotoInput.value?.click()
+}
+
+async function subirFoto(event: Event) {
+  const input   = event.target as HTMLInputElement
+  const archivo = input.files?.[0]
+  if (!archivo) return
+
+  subiendo.value  = true
+  errorFoto.value = ''
+
+  try {
+    const formData = new FormData()
+    formData.append('archivo', archivo)
+
+    const id       = authStore.usuario?.idUsuario
+    const response = await fetch(`/api/Usuario/${id}/foto`, {
+      method: 'POST',
+      body: formData
+    })
+
+    if (!response.ok) {
+      const err = await response.json()
+      throw new Error(err.mensaje ?? 'Error al subir la foto.')
+    }
+
+    const data = await response.json()
+
+    if (authStore.usuario) {
+      authStore.usuario.fotoPerfil = data.fotoPerfil
+    }
+  } catch (err: any) {
+    errorFoto.value = err.message ?? 'Error desconocido.'
+  } finally {
+    subiendo.value = false
+    if (fotoInput.value) fotoInput.value.value = ''
+  }
+}
+
 // ── Schema ────────────────────────────────────────────────────────────────────
 const schema = yup.object({
   nombre: yup
@@ -109,14 +175,14 @@ const schema = yup.object({
   password: yup
     .string()
     .test('min-si-relleno', 'La contraseña debe tener al menos 8 caracteres', value => {
-      if (!value) return true // vacío = no cambiar, válido
+      if (!value) return true
       return value.length >= 8
     }),
   confirmPassword: yup
     .string()
     .test('coincide', 'Las contraseñas no coinciden', function (value) {
       const { password } = this.parent
-      if (!password) return true // si no hay contraseña nueva, no validar
+      if (!password) return true
       return value === password
     })
 })
@@ -140,13 +206,11 @@ onMounted(() => {
 
 // ── Toggle edición / guardar ──────────────────────────────────────────────────
 const toggleEdit = handleSubmit(async (values) => {
-  // Si no estamos editando, activar modo edición
   if (!isEditing.value) {
     isEditing.value = true
     return
   }
 
-  // Si estamos editando, guardar
   errorServidor.value = ''
 
   try {
@@ -168,10 +232,10 @@ const toggleEdit = handleSubmit(async (values) => {
       idUsuario: authStore.usuario!.idUsuario,
       nombre: values.nombre!,
       email: values.email!,
-      rol: authStore.usuario!.rol
+      rol: authStore.usuario!.rol,
+      fotoPerfil: authStore.usuario!.fotoPerfil
     })
 
-    // Limpiar contraseña tras guardar
     setValues({ ...values, password: '', confirmPassword: '' })
     isEditing.value = false
   } catch (err) {
@@ -179,3 +243,56 @@ const toggleEdit = handleSubmit(async (values) => {
   }
 })
 </script>
+
+<style scoped>
+.perfil-user__avatar {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  cursor: pointer;
+  overflow: hidden;
+  margin: 0 auto 0.5rem;
+}
+
+.perfil-user__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: filter 0.2s ease;
+}
+
+.perfil-user__avatar-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  font-size: 1.5rem;
+}
+
+.perfil-user__avatar:hover .perfil-user__avatar-overlay {
+  opacity: 1;
+}
+
+.perfil-user__avatar:hover .perfil-user__img {
+  filter: brightness(0.75);
+}
+
+.perfil-user__foto-estado {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0.25rem 0;
+}
+
+.perfil-user__foto-error {
+  font-size: 0.85rem;
+  color: #dc2626;
+  margin: 0.25rem 0;
+}
+</style>

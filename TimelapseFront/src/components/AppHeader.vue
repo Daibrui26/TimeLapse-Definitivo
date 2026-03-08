@@ -14,7 +14,7 @@
 
     <RouterLink v-if="variant === 'app'" to="/menu">
       <img
-        src="@/assets/img/Perfil-removebg-preview.png"
+        :src="fotoPerfil"
         alt="Perfil"
         class="header__profile"
       />
@@ -23,7 +23,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import perfilFallback from '@/assets/img/Perfil-removebg-preview.png'
 
 interface Props {
   variant?: 'public' | 'app'
@@ -34,4 +37,10 @@ withDefaults(defineProps<Props>(), {
   variant: 'app',
   logoLink: '/home'
 })
+
+const authStore = useAuthStore()
+
+const fotoPerfil = computed(() =>
+  authStore.usuario?.fotoPerfil || perfilFallback
+)
 </script>
